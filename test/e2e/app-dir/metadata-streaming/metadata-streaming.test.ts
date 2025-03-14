@@ -93,9 +93,11 @@ describe('app-dir - metadata-streaming', () => {
 
     expect((await browser.elementsByCss('head title')).length).toBe(1)
     expect((await browser.elementsByCss('body title')).length).toBe(0)
+    expect(await browser.elementByCss('title').text()).toBe('parallel title')
 
     const $ = await next.render$('/parallel-routes')
     expect($('title').length).toBe(1)
+    expect($('head title').text()).toBe('parallel title')
 
     // validate behavior remains the same on client navigations
     await browser.elementByCss('[href="/parallel-routes/test-page"]').click()
@@ -120,6 +122,18 @@ describe('app-dir - metadata-streaming', () => {
     })
 
     expect((await browser.elementsByCss('title')).length).toBe(1)
+  })
+
+  it('should still render layout metadata if children is not rendered but rest slots are', async () => {
+    const browser = await next.browser('/parallel-routes-no-children')
+
+    expect((await browser.elementsByCss('head title')).length).toBe(1)
+    expect((await browser.elementsByCss('body title')).length).toBe(0)
+    expect(await browser.elementByCss('title').text()).toBe('parallel title')
+
+    const $ = await next.render$('/parallel-routes-no-children')
+    expect($('title').length).toBe(1)
+    expect($('head title').text()).toBe('parallel title')
   })
 
   describe('dynamic api', () => {
